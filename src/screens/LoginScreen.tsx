@@ -1,13 +1,34 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, StyleSheet,ScrollView ,Pressable, Alert} from 'react-native';
+import React, {  useEffect, useState } from 'react';
 import Colores from '../style/Colores';
 import { TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
+
+type Account = {
+  email: string; password: string;
+}
+
 export default function LoginScreen() {
   const [showPassword,setShowPassword]=useState<boolean>(false);
+
+  const [userInfo,setUserInfo]=useState<Account>({
+    email:'',
+    password:'',
+  })
+
+  const setData=(type:string,value:string)=>{
+    setUserInfo((prev)=>({
+...prev,
+[type]:value,
+    }));
+  };
+ useEffect(()=>{
+  console.log(userInfo);
+ },[userInfo]);
   return (
     <View style={styles.container}>
+      <ScrollView keyboardShouldPersistTaps={"handled"}  contentContainerStyle={{flex:1,width:'100%',height:'100%'}}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Sign in to your</Text>
         <Text style={styles.title}>Account</Text>
@@ -21,14 +42,17 @@ export default function LoginScreen() {
             style={styles.Input}
             placeholder="someone@gmail.com"
             keyboardType="email-address"
+            onChangeText={(e)=>setData('email',e)}
           />
         </View>
        <View style={styles.inputContainer}>
           <Text style={styles.floatingLabel}>Password</Text>
+          <View style={styles.passwordWrapper} >
           <TextInput
             style={styles.Input}
             placeholder="Password"
             secureTextEntry={!showPassword}
+            onChangeText={(e)=>setData("password",e)}
           />
           <TouchableOpacity onPress={()=> setShowPassword(!showPassword)}>
             <Icon name={showPassword ? 'eye-off' : 'eye'} 
@@ -37,12 +61,15 @@ export default function LoginScreen() {
               style={styles.icon}
               />
           </TouchableOpacity>
+          </View>
       </View>
-
+      < Pressable onPress={()=>console.log('message',userInfo.email)} >
+        <Text>connexion</Text>
+      </Pressable>
         <Text>Forget Password ?</Text>
-        <Icon style={[{backgroundColor:'red'}]} name="eye" size={22} color="green" />
 
       </View>
+      </ScrollView>
     </View>
   );
 }
@@ -50,8 +77,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    paddingHorizontal: 24,
+    backgroundColor: Colores.dark,
     paddingTop: 80,
   },
   headerContainer: {
@@ -83,20 +109,23 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     padding: 24,
+    width:'100%',
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    justifyContent:'flex-start',
   },
-  Input:{
-    
-    borderColor:Colores.green,
-    borderStyle:'solid',
-    borderWidth:1,
-    borderRadius:10,
+  Input:{    borderRadius:10,
     height:50,
+    width:'90%',
+    padding:10,
   },
   inputContainer: {
     marginBottom: 30,
     position: 'relative',
+    borderWidth:1,
+    borderColor:Colores.green,
+    borderRadius:10
+
   },
   floatingLabel: {
     position: 'absolute',
@@ -114,8 +143,8 @@ const styles = StyleSheet.create({
   passwordWrapper:{
     flexDirection:'row',
     alignItems:'center',
-    borderWidth:1,
-  }
+  },
+ 
 });
 
 

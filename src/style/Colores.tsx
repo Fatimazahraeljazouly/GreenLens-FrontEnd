@@ -7,7 +7,8 @@ const Colores={
     green:'#008000',
     white2:'#FFE9E9',
     green1:'#4CAF19',
-    greenLight:'rgb(234, 248, 231)'
+    greenLight:'rgb(234, 248, 231)',
+    greenn:'#00ff01',
 
 };
 export default Colores;
