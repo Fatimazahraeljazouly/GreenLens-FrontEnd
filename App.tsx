@@ -5,7 +5,6 @@ import LoadingScreen1 from './src/screens/LoadingScreen1';
 import { StatusBar } from 'react-native';
 type LoadingStage = 'native_splash' | 'circle_expand' | 'logo_pulse' | 'app_ready';
 function App(): React.JSX.Element {
-  
   const [currentStage,setCurrentStage] = useState<LoadingStage>('native_splash');
   useEffect(()=>{
     setCurrentStage('circle_expand');

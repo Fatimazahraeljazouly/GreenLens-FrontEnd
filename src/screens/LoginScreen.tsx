@@ -4,6 +4,8 @@ import Colores from '../style/Colores';
 import { TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { TouchableOpacity } from 'react-native';
+import OrOptions from '../components/OrOptions';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type Account = {
   email: string; password: string;
@@ -11,11 +13,10 @@ type Account = {
 
 export default function LoginScreen() {
   const [showPassword,setShowPassword]=useState<boolean>(false);
-
   const [userInfo,setUserInfo]=useState<Account>({
     email:'',
     password:'',
-  })
+  });
 
   const setData=(type:string,value:string)=>{
     setUserInfo((prev)=>({
@@ -26,9 +27,20 @@ export default function LoginScreen() {
  useEffect(()=>{
   console.log(userInfo);
  },[userInfo]);
+
+
+ const handlSubmit=()=>{
+  if(!userInfo.email || !userInfo.password){
+    Alert.alert('Please Enter an email and a Password ')
+    return;
+  }
+
+  //call the api for auth
+ }
   return (
     <View style={styles.container}>
-      <ScrollView keyboardShouldPersistTaps={"handled"}  contentContainerStyle={{flex:1,width:'100%',height:'100%'}}>
+      <ScrollView
+       keyboardShouldPersistTaps={"handled"}  contentContainerStyle={{flex:1,width:'100%',height:'100%'}}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Sign in to your</Text>
         <Text style={styles.title}>Account</Text>
@@ -63,16 +75,37 @@ export default function LoginScreen() {
           </TouchableOpacity>
           </View>
       </View>
-      < Pressable onPress={()=>console.log('message',userInfo.email)} >
-        <Text>connexion</Text>
+      <Text style={styles.ForgetPassword} >Forget Password ?</Text>
+     <View style={{alignItems:'center',top:20}}>
+     < Pressable style={styles.bottom} onPress={handlSubmit} >
+        <Text style={styles.text}>Login</Text>
       </Pressable>
-        <Text>Forget Password ?</Text>
-
+     </View>
+     <View style={styles.OrContainer}>
+        <OrOptions/>
+      </View>
+      <View style={styles.LoginOptionsContainer}>
+        <Pressable style={styles.LoginOptions}>
+        <Icon name="facebook" size={24} color="#4267B2" style={{ marginRight: 8 }}/>
+          <Text style={styles.textOpt} >Facebook</Text>
+        </Pressable>
+        <Pressable  style={styles.LoginOptions}>
+        <MaterialCommunityIcons name="google" size={24} color="#DB4437"style={{ marginRight: 8 }} />
+          <Text style={styles.textOpt} >Google</Text>
+        </Pressable>
+      </View>
+      <View style={styles.registerContainer}>
+          <Text style={styles.text} >Don't have an account ?</Text>
+          <Pressable>
+            <Text style={styles.textRegister}>Register</Text>
+          </Pressable>
+      </View>
       </View>
       </ScrollView>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -85,15 +118,17 @@ const styles = StyleSheet.create({
   },
   title: {
     color: Colores.greenLight,
-    fontSize: 28,
+    fontSize: 29,
     fontWeight: 'bold',
     lineHeight: 34,
     textTransform: 'capitalize',
+    left:14,
   },
   subtitle: {
     color: '#888',
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 10,
+    left:14,
   },
   label: {
    color: Colores.dark,
@@ -115,17 +150,17 @@ const styles = StyleSheet.create({
     justifyContent:'flex-start',
   },
   Input:{    borderRadius:10,
-    height:50,
+    height:56,
     width:'90%',
     padding:10,
+    paddingLeft:19
   },
   inputContainer: {
     marginBottom: 30,
     position: 'relative',
     borderWidth:1,
-    borderColor:Colores.green,
+    borderColor:Colores.green1,
     borderRadius:10
-
   },
   floatingLabel: {
     position: 'absolute',
@@ -133,9 +168,10 @@ const styles = StyleSheet.create({
     left: 14,
     backgroundColor: Colores.light,
     paddingHorizontal: 6,
-    fontSize: 13,
-    color: Colores.green,
+    fontSize: 14,
+    color: Colores.green1,
     zIndex:1,
+    fontWeight:'500'
   },
   icon:{
     marginLeft: 10,
@@ -144,7 +180,64 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     alignItems:'center',
   },
- 
+  ForgetPassword:
+  {color:Colores.green1,
+    fontWeight:'600',
+    top:-15,
+    textAlign:'right'
+  },
+  bottom:{
+    backgroundColor:Colores.green1,
+    height:50,
+    width:'80%',
+    padding:10,
+    borderRadius:10,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  text:{
+    color:Colores.dark,
+    fontWeight:'600',
+    fontSize:15,
+    letterSpacing:1
+  },
+  OrContainer:{
+   marginTop:60,
+    alignItems: 'center',
+    justifyContent: 'center',
+},
+LoginOptionsContainer:{
+  marginTop:40,
+  flexDirection:'row',
+  justifyContent:'space-between',
+  paddingHorizontal:4
+},
+LoginOptions:{
+  flexDirection:'row',
+  backgroundColor:Colores.dark,
+  borderRadius:10,
+  width:'47%',
+  height:50,
+  justifyContent:'center',
+  alignItems:'center',
+},
+textOpt:{
+  color:Colores.green1,
+  textAlign: 'center',
+  fontSize:14,
+  fontWeight:'400'
+},
+registerContainer:{
+  flexDirection:'row',
+  justifyContent:'center',
+  marginTop:50
+},
+textRegister:{
+  color:Colores.green1,
+  textAlign: 'center',
+  fontSize:17,
+  fontWeight:'500'
+}
 });
 
 

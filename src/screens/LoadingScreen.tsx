@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing, Image } from 'react-native';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 
 interface ExpandingCircleScreenProps {
   onAnimationComplete: () => void;
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     width: 170,
     height: 170,
     borderRadius: 130,
-    backgroundColor: 'rgba(0,255,0,0.2)',
+    backgroundColor: '#00ff01',
     zIndex: 0,
   },
   logo: {
