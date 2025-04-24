@@ -3,6 +3,9 @@ import AppNavigation from './src/navigation/AppNavigation';
 import LoadingScreen from './src/screens/LoadingScreen';
 import LoadingScreen1 from './src/screens/LoadingScreen1';
 import { StatusBar } from 'react-native';
+import { ToastProvider } from 'react-native-toast-notifications';
+import { UserProvider } from './src/context/UserContext';
+
 type LoadingStage = 'native_splash' | 'circle_expand' | 'logo_pulse' | 'app_ready';
 function App(): React.JSX.Element {
   const [currentStage,setCurrentStage] = useState<LoadingStage>('native_splash');
@@ -32,8 +35,38 @@ function App(): React.JSX.Element {
   };
    return <>
       <StatusBar backgroundColor="#4CAF19"/>
-   {renderContent()}
+      
+    <ToastProvider
+     duration={3000}
+     placement="top"
+     animationType="slide-in"
+     offset={50}
+     successColor="#4CAF50"
+     dangerColor="#F44336"
+     warningColor="#FFC107"
+     normalColor="#2196F3"
+     textStyle={{
+       fontSize: 16,
+       color: '#ffffff',
+       fontWeight: '600',
+     }}
+     style={{
+       borderRadius: 12,
+       paddingVertical: 14,
+       paddingHorizontal: 18,
+       shadowColor: '#000',
+       shadowOpacity: 0.2,
+       shadowRadius: 6,
+       elevation: 5,
+     }}
+    >
+    <UserProvider>
+          {renderContent()}
+    </UserProvider>
+   </ToastProvider>
+
    </>
+
 }
 
 

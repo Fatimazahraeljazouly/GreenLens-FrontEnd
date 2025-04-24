@@ -1,17 +1,21 @@
-import { View, Text, StyleSheet,ScrollView ,Pressable, Alert} from 'react-native';
+import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
 import React, {  useEffect, useState } from 'react';
 import Colores from '../style/Colores';
-import { TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { TouchableOpacity } from 'react-native';
 import OrOptions from '../components/OrOptions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Account } from '../utils/Types';
+import { LoginApi } from '../services/Apis';
+import { useToast } from 'react-native-toast-notifications';
+import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../context/UserContext';
 
-type Account = {
-  email: string; password: string;
-}
 
 export default function LoginScreen() {
+  const { setUser } = useUser();
+
+  const navigation=useNavigation<any>();
+  const toast =useToast();
   const [showPassword,setShowPassword]=useState<boolean>(false);
   const [userInfo,setUserInfo]=useState<Account>({
     email:'',
@@ -29,13 +33,25 @@ export default function LoginScreen() {
  },[userInfo]);
 
 
- const handlSubmit=()=>{
+ const handlSubmit= async()=>{
   if(!userInfo.email || !userInfo.password){
-    Alert.alert('Please Enter an email and a Password ')
+    toast.show('Please fill in both email and password.', {
+      type: 'danger', // success, warning, danger, normal
+      placement: 'top', // top, bottom, center
+      duration: 3000,
+    });
     return;
   }
-
-  //call the api for auth
+  const Logindata={
+    email:userInfo.email,
+    password:userInfo.password,
+  };
+ const result = await LoginApi(Logindata);
+ if(result?.success){
+  setUserInfo({ email: '', password: '' });
+  setUser(result.data);
+  navigation.navigate('Home'); 
+ }
  }
   return (
     <View style={styles.container}>
@@ -96,7 +112,7 @@ export default function LoginScreen() {
       </View>
       <View style={styles.registerContainer}>
           <Text style={styles.text} >Don't have an account ?</Text>
-          <Pressable>
+          <Pressable onPress={()=> navigation.navigate('Home')}>
             <Text style={styles.textRegister}>Register</Text>
           </Pressable>
       </View>
@@ -237,7 +253,8 @@ textRegister:{
   textAlign: 'center',
   fontSize:17,
   fontWeight:'500'
-}
+},
+
 });
 
 
