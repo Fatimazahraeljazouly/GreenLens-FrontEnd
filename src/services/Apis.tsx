@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { Account } from "./Types"
+import { Account } from "../utils/Types";
 import { useToast } from "react-native-toast-notifications";
 export const LoginApi = async (loginData:Account)=>{
     const toast=useToast();

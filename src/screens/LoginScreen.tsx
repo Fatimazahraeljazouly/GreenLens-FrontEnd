@@ -24,16 +24,15 @@ export default function LoginScreen() {
 
   const setData=(type:string,value:string)=>{
     setUserInfo((prev)=>({
-...prev,
-[type]:value,
-    }));
+    ...prev,
+    [type]:value,
+  }));
   };
  useEffect(()=>{
   console.log(userInfo);
  },[userInfo]);
 
-
- const handlSubmit= async()=>{
+ const handlSubmit = async()=>{
   if(!userInfo.email || !userInfo.password){
     toast.show('Please fill in both email and password.', {
       type: 'danger', // success, warning, danger, normal
@@ -112,7 +111,7 @@ export default function LoginScreen() {
       </View>
       <View style={styles.registerContainer}>
           <Text style={styles.text} >Don't have an account ?</Text>
-          <Pressable onPress={()=> navigation.navigate('Home')}>
+          <Pressable onPress={()=> navigation.navigate('Register')}>
             <Text style={styles.textRegister}>Register</Text>
           </Pressable>
       </View>
