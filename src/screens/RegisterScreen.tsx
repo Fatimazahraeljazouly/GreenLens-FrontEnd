@@ -4,11 +4,14 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconBack from 'react-native-vector-icons/Ionicons';
 import { passwords, registerData } from '../utils/Types';
 import { useNavigation } from '@react-navigation/native';
-import { KeyboardAvoidingView, Platform } from 'react-native';
-import { TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useToast } from 'react-native-toast-notifications';
+import { KeyboardAvoidingView, Platform,TouchableWithoutFeedback, Keyboard,View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
+import { RegisterApi } from '../services/Apis';
+import { ActivityIndicator } from 'react-native';
 
-import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
 export default function RegisterScreen() {
+    const toast = useToast();
+    const [isLoading, setIsLoading] = useState(false);
     const [showPassword,setShowPassword]=useState<boolean>(false);
     const [showConfirmedPassword,setShowConfirmedPassword]=useState<boolean>(false);
     const navigation =useNavigation<any>();
@@ -25,17 +28,61 @@ export default function RegisterScreen() {
         setDataRegister((prev)=>({
             ...prev,
             [type]:value}));
-    }
+    };
     const setPassword=(type:string,value:string)=>{
         setPasswords((prev)=>({
             ...prev,
             [type]:value,
-        }))
-    }
+        }));
+    };
     useEffect(()=>{
         console.log(dataRegister);
-    },[dataRegister])
- 
+    },[dataRegister]);
+    const handlsamePassword=()=>{
+      if(passwords.confirmedPassword!=passwords.password){
+        toast.show('Password Don\'t Match .', {
+          type: 'danger', // success, warning, danger, normal
+          placement: 'top', // top, bottom, center
+          duration: 3000,
+        });
+        return;
+      }else{
+        setDataRegister((prev)=>({
+          ...prev,
+          'password':passwords.confirmedPassword,
+        }));
+        setPasswords({password:'',confirmedPassword:''});
+      }
+    };
+    const handlSubmit = async ()=>{
+      handlsamePassword();
+      if(!dataRegister.email || !dataRegister.fullname || !dataRegister.password){
+        toast.show('Fill In  All the inputs ', {
+          type: 'danger', // success, warning, danger, normal
+          placement: 'top', // top, bottom, center
+          duration: 3000,
+        });
+      }
+      const data = {
+        email:dataRegister.email,
+        password:dataRegister.password,
+        fullname:dataRegister.fullname,
+      };
+      try {
+        setIsLoading(true); // démarrage du loader
+        const result = await RegisterApi(data);
+        if (result?.success) {
+          toast.show('Account created successfully!', { type: 'success' });
+          navigation.navigate('Login');
+        } else {
+          toast.show(result?.data || 'Registration failed.', { type: 'danger' });
+        }
+      } catch (error) {
+        toast.show('An error occurred.', { type: 'danger' });
+      } finally {
+        setIsLoading(false);
+      }
+};
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView
@@ -118,7 +165,7 @@ export default function RegisterScreen() {
                     onChangeText={(e)=>setPassword("confirmedPassword",e)}
                 />
                 <TouchableOpacity onPress={()=> setShowConfirmedPassword(!showConfirmedPassword)}>
-                    <Icon name={showPassword ? 'eye-off' : 'eye'} 
+                    <Icon name={showConfirmedPassword ? 'eye-off' : 'eye'} 
                     color={Colores.green1}
                     size={22}
                     style={styles.icon}
@@ -127,9 +174,12 @@ export default function RegisterScreen() {
               </View>
             </View>
 
-             <View style={{alignItems:'center',top:20}}>
-                 < Pressable style={styles.bottom} /* onPress={handlSubmit}  */>
-                    <Text style={styles.text}>Register</Text>
+             <View style={{alignItems:'center',top:20}} >
+                 < Pressable style={styles.bottom}  onPress={handlSubmit} disabled={isLoading} >
+                 {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                 ) : (
+                  <Text style={styles.text}>Register</Text>)}
                   </Pressable>
             </View>
 
@@ -144,7 +194,6 @@ export default function RegisterScreen() {
     </View>
     </KeyboardAvoidingView>
 </TouchableWithoutFeedback>
-
   )
 }
 

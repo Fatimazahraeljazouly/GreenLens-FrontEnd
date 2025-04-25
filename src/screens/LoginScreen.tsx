@@ -9,11 +9,12 @@ import { LoginApi } from '../services/Apis';
 import { useToast } from 'react-native-toast-notifications';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../context/UserContext';
+import { ActivityIndicator } from 'react-native';
 
 
 export default function LoginScreen() {
   const { setUser } = useUser();
-
+  const [isLoading, setIsLoading] = useState(false);
   const navigation=useNavigation<any>();
   const toast =useToast();
   const [showPassword,setShowPassword]=useState<boolean>(false);
@@ -45,12 +46,19 @@ export default function LoginScreen() {
     email:userInfo.email,
     password:userInfo.password,
   };
- const result = await LoginApi(Logindata);
- if(result?.success){
-  setUserInfo({ email: '', password: '' });
-  setUser(result.data);
-  navigation.navigate('Home'); 
- }
+  try{
+    const result = await LoginApi(Logindata);
+    if(result?.success){
+     setUserInfo({ email: '', password: '' });
+     setUser(result.data);
+     navigation.navigate('Home'); 
+    }
+  }catch(e){
+    toast.show('An error occurred.', { type: 'danger' });
+  }finally{
+    setIsLoading(true)
+  }
+ 
  }
   return (
     <View style={styles.container}>
@@ -93,7 +101,11 @@ export default function LoginScreen() {
       <Text style={styles.ForgetPassword} >Forget Password ?</Text>
      <View style={{alignItems:'center',top:20}}>
      < Pressable style={styles.bottom} onPress={handlSubmit} >
-        <Text style={styles.text}>Login</Text>
+     {isLoading ? (
+      <ActivityIndicator size="small" color="#fff" />
+    ) : (
+       <Text style={styles.text}>Login</Text>
+     )}
       </Pressable>
      </View>
      <View style={styles.OrContainer}>
@@ -112,6 +124,7 @@ export default function LoginScreen() {
       <View style={styles.registerContainer}>
           <Text style={styles.text} >Don't have an account ?</Text>
           <Pressable onPress={()=> navigation.navigate('Register')}>
+    
             <Text style={styles.textRegister}>Register</Text>
           </Pressable>
       </View>
