@@ -5,23 +5,52 @@ import { StatusBar } from "react-native";
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import HistoryScreen from '../screens/HistoryScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Feather';
+import Colores from '../style/Colores';
 const Stack = createNativeStackNavigator();
+const Tab=createBottomTabNavigator();
+
+const BottomTabs=()=>{
+return (
+  <Tab.Navigator
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ color, size }) => {
+      let iconName = route.name === 'Home' ? 'home' : 'clock';
+      return <Icon name={iconName} size={size} color={color} />;
+    },
+    tabBarActiveTintColor: Colores.light,
+    tabBarInactiveTintColor: Colores.dark,
+    headerShown: false,
+    tabBarStyle: {
+      height: 63,
+      paddingBottom: 13,
+      paddingTop: 6,
+      backgroundColor:Colores.green1,
+    },
+    tabBarLabelStyle: {
+      fontSize: 15,
+      fontWeight: 'bold',
+    },
+  })}
+  >
+    <Tab.Screen name="Home" component={HomeScreen}/>
+    <Tab.Screen name="History" component={HistoryScreen}/>
+  </Tab.Navigator>
+);}
 export default function AppNavigation() {
   return (
     <>
-        <StatusBar backgroundColor="#4CAF19"/>
+        <StatusBar backgroundColor={Colores.green1}/>
         <NavigationContainer>
         <Stack.Navigator>
-        <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{headerShown:false}}/>
+        <Stack.Screen options={{headerShown:false}} name="MainTabs" component={BottomTabs} />
           <Stack.Screen
             name='Log in'
             component={LoginScreen}
             options={{headerShown:false,title:'Log in'}}
           />
-           
             <Stack.Screen
             name='Register'
             component={RegisterScreen}

@@ -4,8 +4,8 @@ import LoadingScreen from './src/screens/LoadingScreen';
 import LoadingScreen1 from './src/screens/LoadingScreen1';
 import { StatusBar } from 'react-native';
 import { ToastProvider } from 'react-native-toast-notifications';
-import { UserProvider } from './src/context/UserContext';
 import AuthProvider from './src/context/AuthContext';
+import Colores from './src/style/Colores';
 type LoadingStage = 'native_splash' | 'circle_expand' | 'logo_pulse' | 'app_ready';
 function App(): React.JSX.Element {
   const [currentStage,setCurrentStage] = useState<LoadingStage>('native_splash');
@@ -34,7 +34,7 @@ function App(): React.JSX.Element {
     }
   };
    return <>
-      <StatusBar backgroundColor="#4CAF19"/>
+      <StatusBar backgroundColor={Colores.green1}/>
       
     <ToastProvider
      duration={3000}
@@ -61,9 +61,7 @@ function App(): React.JSX.Element {
      }}
     >
     <AuthProvider>
-      <UserProvider>
             {renderContent()}
-      </UserProvider>
     </AuthProvider>
    </ToastProvider>
 
