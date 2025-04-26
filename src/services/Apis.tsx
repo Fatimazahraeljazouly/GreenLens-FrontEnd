@@ -1,9 +1,7 @@
-import { Alert } from "react-native";
 import { Account ,registerData} from "../utils/Types";
 import { useToast } from "react-native-toast-notifications";
 export const LoginApi = async (loginData:Account)=>{
     const toast=useToast();
-
 try{
     const response= await fetch('api url',{
         method:'POST',

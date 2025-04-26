@@ -12,15 +12,16 @@ export default function AppNavigation() {
         <StatusBar backgroundColor="#4CAF19"/>
         <NavigationContainer>
         <Stack.Navigator>
+        <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{headerShown:false}}/>
           <Stack.Screen
             name='Log in'
             component={LoginScreen}
             options={{headerShown:false,title:'Log in'}}
           />
-            <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{headerShown:false}}/>
+           
             <Stack.Screen
             name='Register'
             component={RegisterScreen}

@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
-import React, {  useEffect, useState } from 'react';
+import React, {  useEffect, useState,useContext } from 'react';
 import Colores from '../style/Colores';
 import Icon from 'react-native-vector-icons/Feather';
 import OrOptions from '../components/OrOptions';
@@ -8,12 +8,10 @@ import { Account } from '../utils/Types';
 import { LoginApi } from '../services/Apis';
 import { useToast } from 'react-native-toast-notifications';
 import { useNavigation } from '@react-navigation/native';
-import { useUser } from '../context/UserContext';
 import { ActivityIndicator } from 'react-native';
-
-
+import { AuthContext } from '../context/AuthContext';
 export default function LoginScreen() {
-  const { setUser } = useUser();
+  const { login } = useContext(AuthContext)!;
   const [isLoading, setIsLoading] = useState(false);
   const navigation=useNavigation<any>();
   const toast =useToast();
@@ -47,16 +45,17 @@ export default function LoginScreen() {
     password:userInfo.password,
   };
   try{
+    setIsLoading(true);
     const result = await LoginApi(Logindata);
     if(result?.success){
      setUserInfo({ email: '', password: '' });
-     setUser(result.data);
+     login(result.data);
      navigation.navigate('Home'); 
     }
   }catch(e){
     toast.show('An error occurred.', { type: 'danger' });
   }finally{
-    setIsLoading(true)
+    setIsLoading(false)
   }
  
  }
