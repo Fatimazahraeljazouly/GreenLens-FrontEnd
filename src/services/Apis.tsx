@@ -1,49 +1,68 @@
 import { Account ,registerData} from "../utils/Types";
-import { useToast } from "react-native-toast-notifications";
-export const LoginApi = async (loginData:Account)=>{
-    const toast=useToast();
+import axios from 'axios';
+
+
+export const LoginApi = async (loginData:Account,toast:any)=>{
 try{
-    const response= await fetch('api url',{
-        method:'POST',
-        headers:{
-            'Content-Type':'application/json',
-        },
-        body:JSON.stringify(loginData),
-    });
-    const data =await response.json();
-    if(response.ok){
+    const response = await axios.post('api/url',loginData)
+    const data = response.data;
+  
         toast.show('Login successful!', { type: 'success' });
         return {success:true,data};
-    }else{
-        toast.show('Login failed.' + (data.message || 'Something went wrong', { type: 'danger' }));
-        return {success:false,data};
-    }
-}catch(e){
-    //.alert('There was an error. Please try again.'); // Erreur réseau
-    toast.show('There was an error. Please try again.',{type:'danger'});
+}catch(e:any){
+    const errorMessage = e.response?.data?.message || 'Something went wrong';
+
+    toast.show('Login Failed:'+errorMessage,{type:'danger'});
     console.log(e);
 }
 };
 
-export const RegisterApi= async(RegisterData:registerData)=>{
-    const toast = useToast();
+export const RegisterApi= async(RegisterData:registerData,toast:any)=>{
     try{
-        const response = await fetch ('api/register',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(RegisterData),
-        });
-        const data =await response.json();
-        if(response.ok){
+        const response = await axios.post('api/register',RegisterData)
+        const data = response.data;
+       
             toast.show('Registration successful!', { type: 'success' });
             return {success:true,data};
-        }else{
-            toast.show('Registration failed',{type:'danger'});
-            return {success:false,data};
-        }
-    }catch(e){
-        toast.show('There was an error. Please try again.',{type:'danger'});
+       
+    }catch(e:any){
+        const errorMessage=e.response?.data?.message || 'Something went wrong';
+        toast.show('Registration Failed: '+errorMessage,{type:'danger'});
         console.log(e);
     }
 
+}
+
+export const SendImageApi=async (imageUri:string, toast: any)=>{
+    try{
+         const extension = imageUri.split('.').pop()?.toLowerCase();
+         let mimeType = '';
+         if (extension === 'jpg' || extension === 'jpeg') {
+             mimeType = 'image/jpeg';
+         } else if (extension === 'png') {
+             mimeType = 'image/png';
+         } else {
+             toast.show('.' + mimeType + 'is Unsupported  format.', { type: 'danger' });
+             return { success: false, data: null };
+         }
+        const formData=new FormData();
+        formData.append('image',{
+            uri:imageUri,
+            name:`photo.${extension}`,
+            type:mimeType,
+        }as any);
+
+        const response= await axios.post('api/sendImage',formData,{
+            headers:{
+                'Content-Type':'multipart/form-data',
+            },
+        });
+        const data =response.data;
+        toast.show('Image uploaded successfully!',{type:'success'})
+        return {success:true,data};
+    }catch(error:any){
+        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        toast.show('Image upload failed. ' + errorMessage, { type: 'danger' });
+        return { success: false, data: error.response?.data };
+    }
 }

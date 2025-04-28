@@ -3,19 +3,46 @@
   import { AuthContext } from '../context/AuthContext';
   import Icon from 'react-native-vector-icons/Feather';
   import Colores from '../style/Colores';
-  const logoImg = require('../assets/leaf.jpg'); // Correct
-
+  import ImagePicker from 'react-native-image-crop-picker';
+  import { SendImageApi } from '../services/Apis';
+  import { ImageSourcePropType } from 'react-native';
+import {useToast} from 'react-native-toast-notifications';
+  //import { ActivityIndicator } from 'react-native';
   export default function HomeScreen() {
     const { user, logout } = useContext(AuthContext)!;
-    const [imageUri,setImageUri]=useState<number|null>(null);
-    const HandleUploadImg = ()=>{
-
+    const [imageUri,setImageUri] = useState<ImageSourcePropType|null>(null);
+    const [imgLoaded,setImgLoaded] = useState<boolean>(false);
+    const Toast=useToast();
+        const HandleUploadImg = async ()=>{
+        try{
+          const image = await ImagePicker.openPicker({
+            width:300,
+            height:300,
+            cropping:true,
+          });
+          setImageUri({ uri: image.path });
+          setImgLoaded(true);
+          const response =  await SendImageApi(image.path,Toast);
+        }catch(e){
+          console.log(e)
+        }
     };
-    const HandleTakePic = ()=>{
-
+    const HandleTakePic = async()=>{
+        try{
+          const image = await ImagePicker.openCamera({
+            width:300,
+            height:300,
+            cropping:true,
+          });
+          setImageUri({ uri:image.path });
+          setImgLoaded(true);
+          const respone= await SendImageApi(image.path,Toast);
+        }catch(e){
+          console.log(e);
+        }
     };
-    const HandlGetInfo=()=>{
-      setImageUri(logoImg);
+    const HandleGetInfo=()=>{
+      
     }
   return (
       <View style={styles.container}>
@@ -42,11 +69,19 @@
             <Text  style={styles.iconText}>Take Picture</Text>
             </TouchableOpacity>
           </View>
-          {imageUri && (
+        {/*   {imgLoaded === false && (
+               <ActivityIndicator size="large" color={Colores.green1} style={{ marginTop: 20 }} />
+        )} */}
+          {imageUri ? (
             <Image source={imageUri} style ={styles.imagePreview} />
+          ) : (
+            <View style={styles.placeholderContainer}>
+            <Icon name="image" size={50} color={Colores.dark2} />
+            <Text style={styles.placeholderText}>No image selected</Text>
+          </View>
           )}
-          <TouchableOpacity style={styles.moreInfoButton}>
-            <Text style={styles.buttonText} onPress={HandlGetInfo}>Get more information</Text>
+          <TouchableOpacity  onPress={HandleGetInfo} style={[styles.moreInfoButton, { opacity: imgLoaded ? 1 : 0.5 }]} disabled={!imgLoaded}>
+            <Text style={styles.buttonText} >Get more information</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -148,5 +183,22 @@
       color:Colores.greenLight,
       fontSize:14,
       fontWeight:'600',
-    }
+    },
+    placeholderContainer: {
+      marginTop: '10%',
+      width: '90%',
+      height: '35%',
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: Colores.dark2,
+      borderStyle: 'dashed',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    placeholderText: {
+      marginTop: 8,
+      color: Colores.dark2,
+      fontSize: 14,
+    },
+    
   });

@@ -46,7 +46,7 @@ export default function LoginScreen() {
   };
   try{
     setIsLoading(true);
-    const result = await LoginApi(Logindata);
+    const result = await LoginApi(Logindata,toast);
     if(result?.success){
      setUserInfo({ email: '', password: '' });
      login(result.data);

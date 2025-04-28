@@ -81,7 +81,7 @@ export default function RegisterScreen() {
     
       try {
         setIsLoading(true); // démarrage du loader
-        const result = await RegisterApi(data);
+        const result = await RegisterApi(data,toast);
         if (result?.success) {
           toast.show('Account created successfully!', { type: 'success' });
           login(result.data); 
