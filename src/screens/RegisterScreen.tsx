@@ -6,7 +6,6 @@ import { passwords, register, registerData } from '../utils/Types';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from 'react-native-toast-notifications';
 import { KeyboardAvoidingView, Platform,TouchableWithoutFeedback, Keyboard,View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
-import { RegisterApi } from '../services/Apis';
 import { ActivityIndicator } from 'react-native';
 import { useRegisterMutation } from '../redux/Actions/Authapi';
 export default function RegisterScreen() {
@@ -16,7 +15,6 @@ export default function RegisterScreen() {
     const [showConfirmedPassword,setShowConfirmedPassword]=useState<boolean>(false);
     const navigation =useNavigation<any>();
     const [Register,{isLoading}]=useRegisterMutation()
-
 
     const [dataRegister,setDataRegister]=useState<registerData>({
         email:'',
@@ -33,12 +31,15 @@ export default function RegisterScreen() {
             ...prev,
             [type]:value}));
     };
+
     const setPassword=(type:string,value:string)=>{
         setPasswords((prev)=>({
             ...prev,
             [type]:value,
         }));
     };
+
+
     useEffect(()=>{
         console.log(dataRegister);
     },[dataRegister]);
@@ -54,11 +55,15 @@ export default function RegisterScreen() {
         });
         return; // Stop if passwords don't match
       }
+
+
       const data:register = {
         email:dataRegister.email,
         password:passwords.password,
         fullname:dataRegister.fullname,
       };
+
+
       if(!data.email || !data.fullname || !data.password){
         toast.show('Fill In  All the fields', {
           type: 'danger',
@@ -80,8 +85,6 @@ export default function RegisterScreen() {
         toast.show('An error occurred.', { type: 'danger' });
       }
 };
-
-
 
 
 

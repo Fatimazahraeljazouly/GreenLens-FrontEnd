@@ -9,8 +9,12 @@ import HistoryScreen from '../screens/HistoryScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Feather';
 import Colores from '../style/Colores';
+import DetailsScreen from '../screens/DetailsScreen';
+
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
+
+
 export type routes = {
   Home:undefined,
   History:undefined,
@@ -48,7 +52,7 @@ export default function AppNavigation() {
     <>
         <StatusBar backgroundColor={Colores.green1} barStyle={"dark-content"}/>
         <NavigationContainer>
-        <Stack.Navigator initialRouteName='Login'>
+        <Stack.Navigator initialRouteName='details'>
         <Stack.Screen options={{headerShown:false}} name="MainTabs" component={BottomTabs} />
           <Stack.Screen
             name='Login'
@@ -58,6 +62,11 @@ export default function AppNavigation() {
             <Stack.Screen
             name='Register'
             component={RegisterScreen}
+            options={{headerShown:false}}
+            />
+             <Stack.Screen
+            name='details'
+            component={DetailsScreen}
             options={{headerShown:false}}
             />
        </Stack.Navigator>
