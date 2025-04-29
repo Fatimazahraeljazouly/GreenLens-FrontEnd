@@ -1,28 +1,45 @@
   import { View, Text, TouchableOpacity, StyleSheet ,Image} from 'react-native';
-  import React, { useContext,useState } from 'react';
-  import { AuthContext } from '../context/AuthContext';
+  import React, {useState } from 'react';
+
   import Icon from 'react-native-vector-icons/Feather';
   import Colores from '../style/Colores';
   import ImagePicker from 'react-native-image-crop-picker';
   import { SendImageApi } from '../services/Apis';
   import { ImageSourcePropType } from 'react-native';
-import {useToast} from 'react-native-toast-notifications';
+  import {useToast} from 'react-native-toast-notifications';
+  import { useGetProfileQuery } from '../redux/Actions/Authapi';
+  import { usePredictMutation } from '../redux/Actions/Predictapi';
+  import { destroyAllSessions } from '../utils/session';
+  import { useNavigation } from '@react-navigation/native';
+
+
+
+
+
   //import { ActivityIndicator } from 'react-native';
   export default function HomeScreen() {
-    const { user, logout } = useContext(AuthContext)!;
-    const [imageUri,setImageUri] = useState<ImageSourcePropType|null>(null);
+    const [imageUri,setImageUri] = useState<any|null>(null);
     const [imgLoaded,setImgLoaded] = useState<boolean>(false);
+    const {data,isLoading}=useGetProfileQuery();
+    const [Predict,{isLoading:imgPredicted}]=usePredictMutation();
+    const navigation=useNavigation<any>();
+
     const Toast=useToast();
-        const HandleUploadImg = async ()=>{
+        const HandleUploadImg =  ()=>{
         try{
-          const image = await ImagePicker.openPicker({
+          ImagePicker.openPicker({
             width:300,
             height:300,
             cropping:true,
+          }).then(image=>{
+            const imageFile={
+              uri:image.path,
+              type:image.mime,
+              name:image.path.split('/').pop(),
+            }
+            setImageUri(imageFile);
           });
-          setImageUri({ uri: image.path });
           setImgLoaded(true);
-          const response =  await SendImageApi(image.path,Toast);
         }catch(e){
           console.log(e)
         }
@@ -33,25 +50,42 @@ import {useToast} from 'react-native-toast-notifications';
             width:300,
             height:300,
             cropping:true,
+          }).then(image =>{
+            const imageFile={
+              uri:image.path,
+              type:image.mime,
+              name:image.path.split('/').pop(),
+            };
+            setImageUri(imageFile);
           });
-          setImageUri({ uri:image.path });
           setImgLoaded(true);
-          const respone= await SendImageApi(image.path,Toast);
         }catch(e){
           console.log(e);
         }
     };
-    const HandleGetInfo=()=>{
+    const HandleGetInfo = async () => {
+      if (!imageUri) return;
       
+      console.log("Bouton cliqué !");
+      try {
+        const result = await Predict(imageUri).unwrap();
+        console.log("Classification Result:", result);
+      } catch (err) {
+        console.error("Error Classification:", err);
+      }
+    };
+    const logout= async()=>{
+        await destroyAllSessions(); 
+        navigation.navigate('Login');
     }
   return (
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.userInfoContainer}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{user?.fullname.charAt(0).toUpperCase() || 'E'}</Text>
+              <Text style={styles.avatarText}>{data?.fullname.charAt(0).toUpperCase() || 'E'}</Text>
             </View>
-            <Text style={styles.welcomeText}>Hi, {user?.fullname || 'El jazouly Fatima Zahra'}</Text>
+            <Text style={styles.welcomeText}>Hi, {data?.fullname || 'N/A'}</Text>
           </View>
           <TouchableOpacity onPress={logout} style={styles.logoutButton}>
             <Icon name="log-out" size={21} color={Colores.dark}/>

@@ -1,21 +1,24 @@
-import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
-import React, {  useEffect, useState,useContext } from 'react';
+import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput, Alert, StatusBar,} from 'react-native';
+import React, {  useEffect, useState } from 'react';
 import Colores from '../style/Colores';
 import Icon from 'react-native-vector-icons/Feather';
 import OrOptions from '../components/OrOptions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Account } from '../utils/Types';
-import { LoginApi } from '../services/Apis';
 import { useToast } from 'react-native-toast-notifications';
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
+import { useLogInMutation } from '../redux/Actions/Authapi';
+import { setSession } from '../utils/session';
+
+
+
+
 export default function LoginScreen() {
-  const { login } = useContext(AuthContext)!;
-  const [isLoading, setIsLoading] = useState(false);
   const navigation=useNavigation<any>();
   const toast =useToast();
   const [showPassword,setShowPassword]=useState<boolean>(false);
+  const [LogIn,{isLoading}] = useLogInMutation()
   const [userInfo,setUserInfo]=useState<Account>({
     email:'',
     password:'',
@@ -31,36 +34,35 @@ export default function LoginScreen() {
   console.log(userInfo);
  },[userInfo]);
 
- const handlSubmit = async()=>{
-  if(!userInfo.email || !userInfo.password){
+ const handleSubmit = async () => {
+  if (!userInfo.email || !userInfo.password) {
     toast.show('Please fill in both email and password.', {
-      type: 'danger', // success, warning, danger, normal
-      placement: 'top', // top, bottom, center
+      type: 'danger',
+      placement: 'top',
       duration: 3000,
     });
     return;
   }
-  const Logindata={
-    email:userInfo.email,
-    password:userInfo.password,
-  };
-  try{
-    setIsLoading(true);
-    const result = await LoginApi(Logindata,toast);
-    if(result?.success){
-     setUserInfo({ email: '', password: '' });
-     login(result.data);
-     navigation.navigate('Home'); 
+
+  try {
+    const result = await LogIn(userInfo).unwrap(); // <-- lowercase logIn
+    if (result?.access_token) {
+      setUserInfo({ email: '', password: '' });
+      console.log(result.access_token);
+      await setSession('token',result.access_token);
+      navigation.navigate('MainTabs');
+
+    } else{
+      toast.show('The email or password not correct ',{type:'danger'});
+      setUserInfo({ email: '', password: '' });
     }
-  }catch(e){
+  } catch (e) {
     toast.show('An error occurred.', { type: 'danger' });
-  }finally{
-    setIsLoading(false)
   }
- 
- }
+};
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={"dark-content"} />
       <ScrollView
        keyboardShouldPersistTaps={"handled"}  contentContainerStyle={{flex:1,width:'100%',height:'100%'}}>
       <View style={styles.headerContainer}>
@@ -74,6 +76,7 @@ export default function LoginScreen() {
           <Text style={styles.floatingLabel}>Email</Text>
           <TextInput
             style={styles.Input}
+            value={userInfo.email}
             placeholder="someone@gmail.com"
             keyboardType="email-address"
             onChangeText={(e)=>setData('email',e)}
@@ -84,6 +87,7 @@ export default function LoginScreen() {
           <View style={styles.passwordWrapper} >
           <TextInput
             style={styles.Input}
+            value={userInfo.password}
             placeholder="Password"
             secureTextEntry={!showPassword}
             onChangeText={(e)=>setData("password",e)}
@@ -99,7 +103,7 @@ export default function LoginScreen() {
       </View>
       <Text style={styles.ForgetPassword} >Forget Password ?</Text>
      <View style={{alignItems:'center',top:20}}>
-     < Pressable style={styles.bottom} onPress={handlSubmit} >
+     < Pressable style={styles.bottom} onPress={handleSubmit} >
      {isLoading ? (
       <ActivityIndicator size="small" color="#fff" />
     ) : (

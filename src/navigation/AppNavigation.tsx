@@ -11,7 +11,11 @@ import Icon from 'react-native-vector-icons/Feather';
 import Colores from '../style/Colores';
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
-
+export type routes = {
+  Home:undefined,
+  History:undefined,
+  Register:undefined,
+}
 const BottomTabs=()=>{
 return (
   <Tab.Navigator
@@ -42,14 +46,14 @@ return (
 export default function AppNavigation() {
   return (
     <>
-        <StatusBar backgroundColor={Colores.green1}/>
+        <StatusBar backgroundColor={Colores.green1} barStyle={"dark-content"}/>
         <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen options={{headerShown:false}} name="MainTabs" component={BottomTabs} />
           <Stack.Screen
-            name='Log in'
+            name='Login'
             component={LoginScreen}
-            options={{headerShown:false,title:'Log in'}}
+            options={{headerShown:false,title:'Login'}}
           />
             <Stack.Screen
             name='Register'

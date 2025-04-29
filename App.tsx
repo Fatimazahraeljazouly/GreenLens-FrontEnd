@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import AppNavigation from './src/navigation/AppNavigation';
 import LoadingScreen from './src/screens/LoadingScreen';
 import LoadingScreen1 from './src/screens/LoadingScreen1';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { ToastProvider } from 'react-native-toast-notifications';
 import AuthProvider from './src/context/AuthContext';
 import Colores from './src/style/Colores';
+import store from './src/redux/Store/Store';
+import { Provider } from 'react-redux';
 type LoadingStage = 'native_splash' | 'circle_expand' | 'logo_pulse' | 'app_ready';
 function App(): React.JSX.Element {
   const [currentStage,setCurrentStage] = useState<LoadingStage>('native_splash');
@@ -33,8 +35,10 @@ function App(): React.JSX.Element {
         return <></>;
     }
   };
-   return <>
-      <StatusBar backgroundColor={Colores.green1}/>
+   return(
+   <View style={{flex:1,}}>
+    <Provider store={store}>
+      <StatusBar backgroundColor={Colores.green1} barStyle={"dark-content"}/>
       
     <ToastProvider
      duration={3000}
@@ -64,9 +68,9 @@ function App(): React.JSX.Element {
             {renderContent()}
     </AuthProvider>
    </ToastProvider>
-
-   </>
-
+   </Provider>
+   </View>
+)
 }
 
 

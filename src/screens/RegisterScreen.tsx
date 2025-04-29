@@ -1,31 +1,33 @@
-import React, { useEffect, useState ,useContext} from 'react';
+import React, { useEffect, useState } from 'react';
 import Colores from '../style/Colores';
 import Icon from 'react-native-vector-icons/Feather';
 import IconBack from 'react-native-vector-icons/Ionicons';
-import { passwords, registerData } from '../utils/Types';
+import { passwords, register, registerData } from '../utils/Types';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from 'react-native-toast-notifications';
 import { KeyboardAvoidingView, Platform,TouchableWithoutFeedback, Keyboard,View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
 import { RegisterApi } from '../services/Apis';
 import { ActivityIndicator } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
-
+import { useRegisterMutation } from '../redux/Actions/Authapi';
 export default function RegisterScreen() {
-  const { login } = useContext(AuthContext)!;
 
     const toast = useToast();
-    const [isLoading, setIsLoading] = useState(false);
     const [showPassword,setShowPassword]=useState<boolean>(false);
     const [showConfirmedPassword,setShowConfirmedPassword]=useState<boolean>(false);
     const navigation =useNavigation<any>();
+    const [Register,{isLoading}]=useRegisterMutation()
+
+
     const [dataRegister,setDataRegister]=useState<registerData>({
         email:'',
         fullname:'',
     });
+
     const [passwords,setPasswords]=useState<passwords>({
         password:'',
         confirmedPassword:'',
     });
+
     const setData=(type:string,value:string)=>{
         setDataRegister((prev)=>({
             ...prev,
@@ -40,22 +42,9 @@ export default function RegisterScreen() {
     useEffect(()=>{
         console.log(dataRegister);
     },[dataRegister]);
- /*    const handlsamePassword=()=>{
-      if(passwords.confirmedPassword!=passwords.password){
-        toast.show('Password Don\'t Match .', {
-          type: 'danger', // success, warning, danger, normal
-          placement: 'top', // top, bottom, center
-          duration: 3000,
-        });
-        return;
-      }else{
-        setDataRegister((prev)=>({
-          ...prev,
-          'password':passwords.confirmedPassword,
-        }));
-        setPasswords({password:'',confirmedPassword:''});
-      }
-    }; */
+
+
+
     const handlSubmit = async ()=>{
       if (passwords.confirmedPassword !== passwords.password) {
         toast.show('Passwords do not match.', {
@@ -65,7 +54,7 @@ export default function RegisterScreen() {
         });
         return; // Stop if passwords don't match
       }
-      const data = {
+      const data:register = {
         email:dataRegister.email,
         password:passwords.password,
         fullname:dataRegister.fullname,
@@ -80,21 +69,22 @@ export default function RegisterScreen() {
       }
     
       try {
-        setIsLoading(true); // démarrage du loader
-        const result = await RegisterApi(data,toast);
-        if (result?.success) {
+        const result = await Register(data).unwrap();
+        if (result?.message){
           toast.show('Account created successfully!', { type: 'success' });
-          login(result.data); 
-          navigation.navigate('Home');
+          navigation.navigate('Login');
         } else {
-          toast.show(result?.data || 'Registration failed.', { type: 'danger' });
+          toast.show('Registration failed.', { type: 'danger' });
         }
       } catch (error) {
         toast.show('An error occurred.', { type: 'danger' });
-      } finally {
-        setIsLoading(false);
       }
 };
+
+
+
+
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView
