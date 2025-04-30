@@ -1,4 +1,4 @@
-import { Int32 } from "react-native/Libraries/Types/CodegenTypes";
+import { Float, Int32 } from "react-native/Libraries/Types/CodegenTypes";
 export type register={
   email: string,
   fullname:string,
@@ -38,3 +38,18 @@ export type DiseaseInfo = {
   note: string;
   date: string; // ISO date string
 };
+
+export type HistType = {
+  class_name: string;
+  image:any
+  Description: string[];
+  symptoms: string[];
+  prevention: string[];
+  note: string;
+  date: string;
+  treatment:string[];
+};
+
+export type HistData={
+  data:HistType[];
+}

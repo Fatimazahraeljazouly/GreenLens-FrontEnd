@@ -11,18 +11,41 @@ import Icon from 'react-native-vector-icons/Feather';
 import Colores from '../style/Colores';
 import DetailsScreen from '../screens/DetailsScreen';
 
+
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
-
 
 export type routes = {
   Home:undefined,
   History:undefined,
   Register:undefined,
 }
-const BottomTabs=()=>{
+
+
+const HomeStack=()=>{
 return (
-  <Tab.Navigator
+     <Stack.Navigator initialRouteName='HomeApp' screenOptions={{headerShown:false}}>
+        <Stack.Screen
+          name='HomeApp'
+          component={HomeScreen}
+        />
+        
+        <Stack.Screen
+          options={{
+            headerShown:true,
+          }}
+          name='details'
+          component={DetailsScreen}
+        />
+    </Stack.Navigator>
+);
+}
+
+
+const BottomTabs=()=>{
+
+return (
+  <Tab.Navigator 
   screenOptions={({ route }) => ({
     tabBarIcon: ({ color, size }) => {
       let iconName = route.name === 'Home' ? 'home' : 'clock';
@@ -43,8 +66,13 @@ return (
     },
   })}
   >
-    <Tab.Screen name="Home" component={HomeScreen}/>
-    <Tab.Screen name="History" component={HistoryScreen}/>
+    <Tab.Screen name="Home" component={HomeStack}/>
+    <Tab.Screen 
+    options={{
+      headerShown:true,
+      headerTitleAlign:'left',
+    }}
+     name="History" component={HistoryScreen}/>
   </Tab.Navigator>
 );}
 export default function AppNavigation() {
@@ -52,7 +80,7 @@ export default function AppNavigation() {
     <>
         <StatusBar backgroundColor={Colores.green1} barStyle={"dark-content"}/>
         <NavigationContainer>
-        <Stack.Navigator initialRouteName='details'>
+        <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen options={{headerShown:false}} name="MainTabs" component={BottomTabs} />
           <Stack.Screen
             name='Login'
@@ -64,11 +92,7 @@ export default function AppNavigation() {
             component={RegisterScreen}
             options={{headerShown:false}}
             />
-             <Stack.Screen
-            name='details'
-            component={DetailsScreen}
-            options={{headerShown:false}}
-            />
+            
        </Stack.Navigator>
         </NavigationContainer>
     </>

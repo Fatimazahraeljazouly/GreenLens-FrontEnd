@@ -2,11 +2,12 @@ import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import { host } from '../../../Config';
 import { DiseaseInfo } from "../../utils/Types";
 import { getSession } from '../../utils/session';
-
+import { HistData } from '../../utils/Types';
 
 
 export const Predictapi=createApi({
     reducerPath:'Predictapi',
+    tagTypes:['HistTag'],
     baseQuery:fetchBaseQuery({
         baseUrl:host,
         prepareHeaders:async(headers)=>{
@@ -32,9 +33,21 @@ export const Predictapi=createApi({
                     body:formData,
                     redirect:'follow',
                 }
-            }
-        })
-    })
-})
+            },
+            invalidatesTags:['HistTag']
+        }),
+        GetHistory:build.query<HistData,void>({
+            query:()=>({
+                method:'GET',
+                url:'api/history',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                redirect:'follow',
+            }),
+            providesTags:['HistTag'],
+        }),
+    }),
+});
 
-export const {usePredictMutation}=Predictapi
+export const {usePredictMutation,useGetHistoryQuery}=Predictapi

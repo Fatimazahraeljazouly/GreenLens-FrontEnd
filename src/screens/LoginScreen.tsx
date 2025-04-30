@@ -15,8 +15,8 @@ import { setSession } from '../utils/session';
 
 
 export default function LoginScreen() {
-  const navigation=useNavigation<any>();
-  const toast =useToast();
+  const navigation = useNavigation<any>();
+  const toast = useToast();
   const [showPassword,setShowPassword]=useState<boolean>(false);
   const [LogIn,{isLoading}] = useLogInMutation()
   const [userInfo,setUserInfo]=useState<Account>({

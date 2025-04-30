@@ -1,11 +1,9 @@
-  import { View, Text, TouchableOpacity, StyleSheet ,Image} from 'react-native';
+  import { View, Text, TouchableOpacity, StyleSheet ,Image,ActivityIndicator} from 'react-native';
   import React, {useState } from 'react';
 
   import Icon from 'react-native-vector-icons/Feather';
   import Colores from '../style/Colores';
   import ImagePicker from 'react-native-image-crop-picker';
-  import { SendImageApi } from '../services/Apis';
-  import { ImageSourcePropType } from 'react-native';
   import {useToast} from 'react-native-toast-notifications';
   import { useGetProfileQuery } from '../redux/Actions/Authapi';
   import { usePredictMutation } from '../redux/Actions/Predictapi';
@@ -16,7 +14,7 @@
 
 
 
-  //import { ActivityIndicator } from 'react-native';
+
   export default function HomeScreen() {
     const [imageUri,setImageUri] = useState<any|null>(null);
     const [imgLoaded,setImgLoaded] = useState<boolean>(false);
@@ -44,9 +42,11 @@
           console.log(e)
         }
     };
+
+
     const HandleTakePic = async()=>{
         try{
-          const image = await ImagePicker.openCamera({
+          ImagePicker.openCamera({
             width:300,
             height:300,
             cropping:true,
@@ -63,21 +63,29 @@
           console.log(e);
         }
     };
+
+
     const HandleGetInfo = async () => {
       if (!imageUri) return;
-      
+
       console.log("Bouton cliqué !");
       try {
         const result = await Predict(imageUri).unwrap();
         console.log("Classification Result:", result);
+        navigation.navigate('details',{result:result,imageUri:imageUri})
+        setImageUri(null);
+        setImgLoaded(false)
       } catch (err) {
         console.error("Error Classification:", err);
       }
     };
-    const logout= async()=>{
+
+    const logout = async()=>{
         await destroyAllSessions(); 
         navigation.navigate('Login');
     }
+
+
   return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -115,6 +123,7 @@
           </View>
           )}
           <TouchableOpacity  onPress={HandleGetInfo} style={[styles.moreInfoButton, { opacity: imgLoaded ? 1 : 0.5 }]} disabled={!imgLoaded}>
+            {imgPredicted && <ActivityIndicator size={16} color={Colores.light}/>}
             <Text style={styles.buttonText} >Get more information</Text>
           </TouchableOpacity>
         </View>
@@ -211,7 +220,9 @@
       paddingHorizontal:'16%',
       paddingVertical:'3%',
       borderRadius:10,
-      textAlign:'center'
+      textAlign:'center',
+      flexDirection:'row',
+      gap:6
     },
     buttonText:{
       color:Colores.greenLight,
