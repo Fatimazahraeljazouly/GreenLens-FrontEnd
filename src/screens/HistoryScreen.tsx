@@ -5,6 +5,7 @@ import Colores from '../style/Colores';
 import { useNavigation } from '@react-navigation/native';
 import { useGetHistoryQuery } from '../redux/Actions/Predictapi';
 import { host } from '../../Config';
+import Laoding from '../components/loading';
 
 export default function HistoryScreen() {
   const navigation = useNavigation<any>();
@@ -12,6 +13,7 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.container}>
+     <Laoding isVisible={isLoading}/>
 
       {data?.data?.length > 0 ? (
         <ScrollView

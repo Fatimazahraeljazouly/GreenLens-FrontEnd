@@ -2,25 +2,31 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import Colores from '../style/Colores';
-interface ExpandingCircleScreenProps {
-  onAnimationComplete: () => void;
-}
+import { useNavigation } from '@react-navigation/native';
+import { getSession } from '../utils/session';
 
-const LoadingScreen1: React.FC<ExpandingCircleScreenProps> = ({ onAnimationComplete }) => {
+
+const LoadingScreen1: React.FC = () => {
+  const navigation  = useNavigation<any>()
   const scaleAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const finalScale = 50;
     Animated.timing(scaleAnim, {
       toValue: finalScale,
-      duration: 3000,
+      duration:2000,
       useNativeDriver: true, 
-    }).start(
-        () => { 
-            console.log("Cercle fini d'animer, appel de onAnimationComplete");
-            onAnimationComplete();
-          }
-    );
-  }, [onAnimationComplete, scaleAnim]);
+    }).start(() => {
+      checkToken()
+    })
+  }, [scaleAnim]);
+
+  const checkToken = async() => {
+    const token  = await getSession('token')
+    if(token) navigation.navigate('MainTabs')
+    else navigation.navigate('Login')
+  }
+
+
 
   return (
     <View style={styles.container}>

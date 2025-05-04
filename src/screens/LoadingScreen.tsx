@@ -1,14 +1,22 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing,Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet,Image, StatusBar } from 'react-native';
+import Colores from '../style/Colores';
 
-interface ExpandingCircleScreenProps {
-  onAnimationComplete: () => void;
-}
 
-const LoadingScreen: React.FC<ExpandingCircleScreenProps> = () => {
-  
+const LoadingScreen: React.FC = () => {
+  const navigation = useNavigation<any>()
+
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.navigate('loading1')
+    },2000)
+
+  },[])
+
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor={Colores.green1} barStyle={'dark-content'}/>
       {/* Glow en arrière-plan */}
       <View
         style={[
@@ -37,15 +45,15 @@ const styles = StyleSheet.create({
   },
   glow: {
     position: 'absolute',
-    width: 170,
-    height: 170,
+    width: 140,
+    height: 140,
     borderRadius: 130,
     backgroundColor: '#00ff01',
     zIndex: 0,
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 140,
+    height: 140,
     zIndex: 1,
   },
 });

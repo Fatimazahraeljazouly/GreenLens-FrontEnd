@@ -1,16 +1,17 @@
   import { View, Text, TouchableOpacity, StyleSheet ,Image,ActivityIndicator} from 'react-native';
   import React, {useState } from 'react';
 
-  import Icon from 'react-native-vector-icons/Feather';
+  import Icon from 'react-native-vector-icons/AntDesign';
+  import IconCam from 'react-native-vector-icons/Feather'
   import Colores from '../style/Colores';
   import ImagePicker from 'react-native-image-crop-picker';
-  import {useToast} from 'react-native-toast-notifications';
   import { useGetProfileQuery } from '../redux/Actions/Authapi';
   import { usePredictMutation } from '../redux/Actions/Predictapi';
   import { destroyAllSessions } from '../utils/session';
   import { useNavigation } from '@react-navigation/native';
-
-
+  import Icon2 from 'react-native-vector-icons/Entypo';
+  import IconProfile from 'react-native-vector-icons/AntDesign'
+  import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 
 
@@ -21,9 +22,13 @@
     const {data,isLoading}=useGetProfileQuery();
     const [Predict,{isLoading:imgPredicted}]=usePredictMutation();
     const navigation=useNavigation<any>();
+    const [menuVisible,setMenuVisible]=useState<boolean>(false);
 
-    const Toast=useToast();
-        const HandleUploadImg =  ()=>{
+    const toggleMenu=()=>{
+      setMenuVisible(!menuVisible)
+    }
+
+    const HandleUploadImg =  ()=>{
         try{
           ImagePicker.openPicker({
             width:300,
@@ -36,8 +41,9 @@
               name:image.path.split('/').pop(),
             }
             setImageUri(imageFile);
+            setImgLoaded(true);
           });
-          setImgLoaded(true);
+          
         }catch(e){
           console.log(e)
         }
@@ -57,8 +63,8 @@
               name:image.path.split('/').pop(),
             };
             setImageUri(imageFile);
+            setImgLoaded(true);
           });
-          setImgLoaded(true);
         }catch(e){
           console.log(e);
         }
@@ -85,20 +91,47 @@
         navigation.navigate('Login');
     }
 
-
+    const goProfile=()=>{
+      navigation.navigate('profile');
+    }
   return (
-      <View style={styles.container}>
+    <TouchableWithoutFeedback
+    onPress={() => {
+      if (menuVisible) setMenuVisible(false);
+      Keyboard.dismiss();
+    }}
+    >
+       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.userInfoContainer}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{data?.fullname.charAt(0).toUpperCase() || 'E'}</Text>
+              <Text style={styles.avatarText}>{data?.fullname?.charAt(0).toUpperCase() || 'J'}</Text>
             </View>
-            <Text style={styles.welcomeText}>Hi, {data?.fullname || 'N/A'}</Text>
+            <Text style={styles.welcomeText}>Hi, {data?.fullname || 'User'}</Text>
           </View>
-          <TouchableOpacity onPress={logout} style={styles.logoutButton}>
-            <Icon name="log-out" size={21} color={Colores.dark}/>
+          <TouchableOpacity onPressOut={toggleMenu} onPress={toggleMenu} style={styles.menuIcon}>
+            <Icon2 name="menu" size={21} color={Colores.dark}/>
           </TouchableOpacity>
+
+          {menuVisible && (
+            <View style={styles.advancedMenu}>
+              <TouchableOpacity style={styles.advancedMenuItem} onPress={goProfile}>
+              <IconProfile name='user' size={22} color={Colores.dark} />
+
+                <Text style={styles.advancedText}>{data?.fullname?.split(' ')[0] || 'Profile'}</Text>
+              </TouchableOpacity>
+
+              <View style={styles.separator} />
+
+              <TouchableOpacity style={styles.advancedMenuItem} onPress={logout}>
+                <Icon name='logout' size={22} color={Colores.Error} style={styles.advancedIcon} />
+                <Text style={[styles.advancedText, { color: Colores.Error }]}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
         </View>
+
         <Text style={styles.title}>Put Picture here!</Text>
         <View style={styles.content}>
           <View style={styles.putImage}>
@@ -107,7 +140,7 @@
             <Text style={styles.iconText}>Upload image</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={HandleTakePic} style={styles.Upload}>
-            <Icon name="camera" size={40} color={Colores.green1} /> 
+            <Icon name="camera" size={40} color={Colores.green1} />
             <Text  style={styles.iconText}>Take Picture</Text>
             </TouchableOpacity>
           </View>
@@ -118,7 +151,7 @@
             <Image source={imageUri} style ={styles.imagePreview} />
           ) : (
             <View style={styles.placeholderContainer}>
-            <Icon name="image" size={50} color={Colores.dark2} />
+            <IconCam name="image" size={50} color={Colores.dark2} />
             <Text style={styles.placeholderText}>No image selected</Text>
           </View>
           )}
@@ -128,6 +161,7 @@
           </TouchableOpacity>
         </View>
       </View>
+    </TouchableWithoutFeedback>
     );
   }
 
@@ -167,14 +201,7 @@
       fontWeight: '600',
       color: Colores.dark2,
     },
-    logoutButton: {
-      backgroundColor: Colores.green1,
-      width: 35,
-      height: 35,
-      borderRadius: 25,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
+    
     content: {
       marginTop:12,
       flex: 1,
@@ -244,6 +271,59 @@
       marginTop: 8,
       color: Colores.dark2,
       fontSize: 14,
+    },
+
+    menuIcon: {
+      backgroundColor: Colores.green1,
+      width: 35,
+      height: 35,
+      borderRadius: 25,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 10, // ou padding si tu veux ajuster
+    },
+    
+    advancedMenu: {
+      position: 'absolute',
+      top: 50, // réduit pour meilleur placement
+      right: 10,
+      backgroundColor: '#F9FAFB',
+      borderRadius: 12,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 4,
+      minWidth: 180,
+      zIndex: 999,
+    },
+    
+    advancedMenuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      paddingVertical: 10,
+      paddingHorizontal: 6,
+      gap: 10, // aligne bien les icônes et textes
+    },
+    
+    
+    advancedIcon: {
+      marginRight: 10,
+    },
+    
+    advancedText: {
+      fontSize: 16,
+      color: '#4B5563', // Gray-700
+      fontWeight: '500',
+    },
+    
+    separator: {
+      height: 1,
+      backgroundColor: '#E5E7EB',
+      marginVertical: 4,
     },
     
   });

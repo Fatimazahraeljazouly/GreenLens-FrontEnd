@@ -189,7 +189,7 @@ export default function RegisterScreen() {
 
             <View style={styles.loginContainer}>
                       <Text style={styles.text} >You already have an account ?</Text>
-                      <Pressable onPress={()=> navigation.navigate('Log in')}>
+                      <Pressable onPress={()=> navigation.navigate('Login')}>
                         <Text style={styles.textLogin}>Login</Text>
                       </Pressable>
             </View>
