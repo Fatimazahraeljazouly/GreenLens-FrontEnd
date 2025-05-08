@@ -6,8 +6,13 @@ import { passwords, register, registerData } from '../utils/Types';
 import { useNavigation } from '@react-navigation/native';
 import { useToast } from 'react-native-toast-notifications';
 import { KeyboardAvoidingView, Platform,TouchableWithoutFeedback, Keyboard,View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput} from 'react-native';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator ,Image} from 'react-native';
 import { useRegisterMutation } from '../redux/Actions/Authapi';
+
+
+const blur = Image.resolveAssetSource(require('./../assets/blur.png'))
+
+
 export default function RegisterScreen() {
 
     const toast = useToast();
@@ -115,13 +120,19 @@ export default function RegisterScreen() {
         </Pressable>
         <ScrollView
                keyboardShouldPersistTaps={"handled"}  
-               contentContainerStyle={{flex:1,width:'100%',height:'100%'}}>
+               contentContainerStyle={{flex:1,width:'100%',height:'100%', paddingTop: 80,}}>
+        
+        <Image source={blur}  style= {styles.blurstyle} />
+                
        <View style={styles.headerContainer}>
               <Text style={styles.title}>Create Your</Text>
               <Text style={styles.title}>Account</Text>
         </View>
             <Text style={styles.subtitle}>Welcome to GreenLens App</Text>
         <View style={styles.form}>
+
+        <Image source={blur}  style= {styles.blurstyleTop} />
+          
         <View style={styles.inputContainer}>
                   <Text style={styles.floatingLabel}>Full Name</Text>
                   <TextInput
@@ -204,7 +215,7 @@ const styles=StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colores.dark,
-        paddingTop: 80,
+
       },
       headerContainer: {
         marginBottom: 30,
@@ -300,4 +311,24 @@ const styles=StyleSheet.create({
     fontSize:17,
     fontWeight:'500'
   },
+
+blurstyle: {
+  position: 'absolute',
+  width: 200,
+  height: 200,
+  resizeMode:'contain',
+  opacity:0.5,
+  top:75,
+  left:-25
+},
+blurstyleTop: {
+  position: 'absolute',
+  width: 200,
+  height: 200,
+  resizeMode:'contain',
+  opacity:0.4,
+  top:-270,
+  right:-30
+}
+
 })

@@ -13,6 +13,7 @@
   import IconProfile from 'react-native-vector-icons/AntDesign'
   import { TouchableWithoutFeedback, Keyboard } from 'react-native';
 
+  const blurHome = Image.resolveAssetSource(require('./../assets/blurHome.png'))
 
 
 
@@ -25,7 +26,7 @@
     const [menuVisible,setMenuVisible]=useState<boolean>(false);
 
     const toggleMenu=()=>{
-      setMenuVisible(!menuVisible)
+      setMenuVisible(true)
     }
 
     const HandleUploadImg =  ()=>{
@@ -89,10 +90,12 @@
     const logout = async()=>{
         await destroyAllSessions(); 
         navigation.navigate('Login');
+        setMenuVisible(false)
     }
 
     const goProfile=()=>{
       navigation.navigate('profile');
+      setMenuVisible(false)
     }
   return (
     <TouchableWithoutFeedback
@@ -112,7 +115,7 @@
           <TouchableOpacity onPressOut={toggleMenu} onPress={toggleMenu} style={styles.menuIcon}>
             <Icon2 name="menu" size={21} color={Colores.dark}/>
           </TouchableOpacity>
-
+          <Image  source={blurHome} style= {styles.imageStyle} />
           {menuVisible && (
             <View style={styles.advancedMenu}>
               <TouchableOpacity style={styles.advancedMenuItem} onPress={goProfile}>
@@ -326,4 +329,8 @@
       marginVertical: 4,
     },
     
+    imageStyle:{
+      position:'absolute',
+      zIndex:-1
+    }
   });

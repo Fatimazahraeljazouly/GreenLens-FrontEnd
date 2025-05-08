@@ -11,6 +11,8 @@ import DetailsScreen from '../screens/DetailsScreen';
 import LoadingScreen from '../screens/LoadingScreen';
 import LoadingScreen1 from '../screens/LoadingScreen1';
 import ProfileScreen from '../screens/ProfileScreen';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+
 
 const Stack = createNativeStackNavigator();
 const Tab=createBottomTabNavigator();
@@ -53,6 +55,27 @@ return (
 }
 
 
+
+
+
+
+const getTabBarStyle = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeApp';
+  if (routeName === 'profile') {
+    return { display: 'none' };
+  }
+  return {
+    height: 63,
+    paddingBottom: 13,
+    paddingTop: 6,
+    backgroundColor: Colores.green1,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+  };
+};
+
+
+
 const BottomTabs=()=>{
 
 return (
@@ -65,12 +88,7 @@ return (
     tabBarActiveTintColor: Colores.light,
     tabBarInactiveTintColor: Colores.dark,
     headerShown: false,
-    tabBarStyle: {
-      height: 63,
-      paddingBottom: 13,
-      paddingTop: 6,
-      backgroundColor:Colores.green1,
-    },
+    tabBarStyle: getTabBarStyle(route),
     tabBarLabelStyle: {
       fontSize: 15,
       fontWeight: 'bold',
@@ -87,9 +105,11 @@ return (
     
   </Tab.Navigator>
 );}
+
+
 export default function AppNavigation() {
   return (
-        <Stack.Navigator initialRouteName='MainTabs'>
+        <Stack.Navigator initialRouteName='loading0'>
         <Stack.Screen options={{headerShown:false}} name="MainTabs" component={BottomTabs} />
           <Stack.Screen
             name='Login'
@@ -116,3 +136,5 @@ export default function AppNavigation() {
        </Stack.Navigator>
   );
 }
+
+

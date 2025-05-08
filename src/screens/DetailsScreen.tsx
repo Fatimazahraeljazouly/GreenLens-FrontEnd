@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import React from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import {useRoute } from '@react-navigation/native'
 import Colores from '../style/Colores'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { DiseaseInfo } from '../utils/Types'
@@ -113,8 +113,7 @@ const styles = StyleSheet.create({
     height: 230,
     borderRadius: 20,
     alignSelf: 'center',
-    marginTop: 70,
-    marginBottom: 20,
+    marginVertical:10,
     resizeMode: 'cover',
     shadowColor: '#000',
     shadowOpacity: 0.15,
@@ -126,12 +125,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 20,
     padding: 20,
-    marginBottom: 40,
+    marginBottom:10,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
   },
   sectionTitle: {
     fontSize: 17,

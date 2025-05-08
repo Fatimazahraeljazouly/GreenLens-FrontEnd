@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   historyCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 10,
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 12,

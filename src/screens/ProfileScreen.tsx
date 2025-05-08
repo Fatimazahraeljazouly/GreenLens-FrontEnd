@@ -25,10 +25,10 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 
 const InfoSection = ({ icon: Icon, value, iconName, onPress }: any) => (
-  <TouchableOpacity style={styles.inputContainer} onPress={onPress}>
+  <View style={styles.inputContainer} onPress={onPress}>
     <Icon name={iconName} size={24} color={Colores.green1} />
     <Text style={styles.input}>{value}</Text>
-  </TouchableOpacity>
+  </View>
 );
 
 export default function ProfileScreen() {
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.headerContainer}>
-          <Text style={styles.title}>Welcome, {fullname || 'User'}</Text>
+          <Text style={styles.title}>{fullname || 'User'}</Text>
           <Text style={styles.subtitle}>Your personal information</Text>
         </View>
 
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colores.dark,
-    paddingTop: 70,
+    paddingTop: 50,
     paddingHorizontal: 16,
   },
   scrollContent: {

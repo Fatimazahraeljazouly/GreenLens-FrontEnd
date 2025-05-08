@@ -15,18 +15,20 @@ const LoadingScreen1: React.FC = () => {
       toValue: finalScale,
       duration:2000,
       useNativeDriver: true, 
-    }).start(() => {
-      checkToken()
     })
-  }, [scaleAnim]);
+  }, []);
 
-  const checkToken = async() => {
-    const token  = await getSession('token')
-    if(token) navigation.navigate('MainTabs')
-    else navigation.navigate('Login')
-  }
-
-
+  useEffect(() =>{
+    const checkToken = async() => {
+      const token  = await getSession('token')
+      if(token) navigation.navigate('MainTabs')
+      else navigation.navigate('Login')
+    }
+  
+  
+    checkToken()
+  },[])
+  
 
   return (
     <View style={styles.container}>

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput, Alert, StatusBar,} from 'react-native';
+import { View, Text, StyleSheet,ScrollView ,Pressable,TouchableOpacity,TextInput, Alert, StatusBar, Image,} from 'react-native';
 import React, {  useEffect, useState } from 'react';
 import Colores from '../style/Colores';
 import Icon from 'react-native-vector-icons/Feather';
@@ -11,7 +11,7 @@ import { ActivityIndicator } from 'react-native';
 import { useLogInMutation } from '../redux/Actions/Authapi';
 import { setSession } from '../utils/session';
 
-
+const blur = Image.resolveAssetSource(require('./../assets/blur.png'))
 
 
 export default function LoginScreen() {
@@ -64,19 +64,23 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <StatusBar barStyle={"dark-content"} />
       <ScrollView
-       keyboardShouldPersistTaps={"handled"}  contentContainerStyle={{flex:1,width:'100%',height:'100%'}}>
+       keyboardShouldPersistTaps={"handled"}  contentContainerStyle={{flex:1,width:'100%',height:'100%',paddingTop: 80,}}>
+        <Image source={blur}  style= {styles.blurstyle} />
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Sign in to your</Text>
         <Text style={styles.title}>Account</Text>
       </View>
 
       <Text style={styles.subtitle}>Welcome to GreenLens App</Text>
+      <Image source={blur}  style= {styles.blurstyleTop} />
       <View style={styles.form}>
       <View style={styles.inputContainer}>
           <Text style={styles.floatingLabel}>Email</Text>
           <TextInput
             style={styles.Input}
             value={userInfo.email}
+            textContentType='emailAddress'
+            inputMode='email'
             placeholder="someone@gmail.com"
             keyboardType="email-address"
             onChangeText={(e)=>setData('email',e)}
@@ -88,15 +92,17 @@ export default function LoginScreen() {
           <TextInput
             style={styles.Input}
             value={userInfo.password}
+            autoCapitalize='none'
+            inputMode='email'
+            textContentType='password'
             placeholder="Password"
             secureTextEntry={!showPassword}
             onChangeText={(e)=>setData("password",e)}
           />
-          <TouchableOpacity onPress={()=> setShowPassword(!showPassword)}>
+          <TouchableOpacity style={styles.icon} onPress={()=> setShowPassword(!showPassword)}>
             <Icon name={showPassword ? 'eye-off' : 'eye'} 
              color={Colores.green1}
               size={22}
-              style={styles.icon}
               />
           </TouchableOpacity>
           </View>
@@ -115,11 +121,11 @@ export default function LoginScreen() {
         <OrOptions/>
       </View>
       <View style={styles.LoginOptionsContainer}>
-        <Pressable style={styles.LoginOptions}>
-        <Icon name="facebook" size={24} color="#4267B2" style={{ marginRight: 8 }}/>
-          <Text style={styles.textOpt} >Facebook</Text>
+        <Pressable android_ripple={{borderless:true}} style={styles.LoginOptions}>
+        <Icon name="facebook" size={24}  color="#4267B2" style={{ marginRight: 8 }}/>
+          <Text style={styles.textOpt}  >Facebook</Text>
         </Pressable>
-        <Pressable  style={styles.LoginOptions}>
+        <Pressable  android_ripple={{borderless:true}} style={styles.LoginOptions}>
         <MaterialCommunityIcons name="google" size={24} color="#DB4437"style={{ marginRight: 8 }} />
           <Text style={styles.textOpt} >Google</Text>
         </Pressable>
@@ -142,7 +148,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colores.dark,
-    paddingTop: 80,
   },
   headerContainer: {
     marginBottom: 30,
@@ -180,7 +185,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     justifyContent:'flex-start',
   },
-  Input:{    borderRadius:10,
+  Input:{ 
+    borderRadius:10,
     height:56,
     width:'90%',
     padding:10,
@@ -205,7 +211,7 @@ const styles = StyleSheet.create({
     fontWeight:'500'
   },
   icon:{
-    marginLeft: 10,
+    marginLeft:2,
   },
   passwordWrapper:{
     flexDirection:'row',
@@ -245,15 +251,17 @@ LoginOptionsContainer:{
 },
 LoginOptions:{
   flexDirection:'row',
-  backgroundColor:Colores.dark,
+  backgroundColor:Colores.light,
   borderRadius:10,
   width:'47%',
-  height:50,
+  height:45,
   justifyContent:'center',
   alignItems:'center',
+  borderColor:Colores.green1,
+  borderWidth:1
 },
 textOpt:{
-  color:Colores.green1,
+  color:Colores.dark,
   textAlign: 'center',
   fontSize:14,
   fontWeight:'400'
@@ -269,6 +277,24 @@ textRegister:{
   fontSize:17,
   fontWeight:'500'
 },
+blurstyle: {
+  position: 'absolute',
+  width: 200,
+  height: 200,
+  resizeMode:'contain',
+  opacity:0.5,
+  top:75,
+  left:-25
+},
+blurstyleTop: {
+  position: 'absolute',
+  width: 200,
+  height: 200,
+  resizeMode:'contain',
+  opacity:0.5,
+  top:-50,
+  right:-20
+}
 
 });
 
